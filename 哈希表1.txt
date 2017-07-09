@@ -1,0 +1,91 @@
+#include<iostream>
+#include<fstream>
+#include<cmath>
+#include <string>
+
+using namespace std;
+#define max 10                      //哈希表长 
+
+int BF(string s1,string s2){
+	int len1=s1.length();
+	int len2=s2.length();
+	for(int i=0;i<len1-len2;i++){
+		for(int j=i,k=0;k<len2;k++){
+			
+			if(s1[j]!=s2[k]){
+				break;
+			}
+			else {
+				if(k==len2-1)return 1;
+				else j++;
+			}
+		}
+		
+	}
+	return 0;
+}
+								
+class Hash{							//哈希表类 
+	public:
+		string *hash_str;  //哈希表关键字 
+		int hash_X1[max]={0};   //程序1关键字频度 
+		int hash_X2[max]={0};   //程序2关键字频度 
+		Hash(string str[]){		//构造函数，赋值哈希表关键字 
+			hash_str = str;
+		}
+		~Hash(){}			//析构函数 
+
+}; 
+int main()
+{
+	
+	string str[max] = {"void","int","for","char","if","else","while","do","break","class"};
+	Hash* hash = new Hash(str);     	//实例化哈希表 ，传入关键字数组 
+	
+	
+	ifstream fin_X1("file_1.txt"); 		//读取程序1 
+	ifstream fin_X2("file_2.txt"); 	   //读取程序2 
+	string word;
+	
+	
+	while(fin_X1>>word){					//逐个读取字符串 
+	cout<<word<<endl;
+		for(int i=0;i<max;i++){
+			if(BF(word,hash->hash_str[i])) hash->hash_X1[i]++;  //用哈希表记录关键字出现频度 
+		}		
+	}
+	
+	while(fin_X2>>word){
+		for(int i=0;i<max;i++){
+			if(BF(word,hash->hash_str[i])) hash->hash_X2[i]++;
+		
+		}		
+	}
+	
+	cout<<"关键字："<<'\t'<<'\t'; 
+	for(int j=0;j<max;j++){						//输出关键字 
+		cout<<hash->hash_str[j]<<'\t';
+	}
+	cout<<endl<<endl<<"程序1关键字频度:"<<'\t';
+	for(int j=0;j<max;j++){						//输出程序1关键字频度 
+		cout<<hash->hash_X1[j]<<'\t';
+	}
+	cout<<endl<<endl<<"程序2关键字频度:"<<'\t';
+	for(int j=0;j<max;j++){							//输出程序2关键字频度 
+		cout<<hash->hash_X2[j]<<'\t';
+	}
+
+    fin_X1.close();    //关闭文件读取 
+    fin_X2.close();
+    
+    double s=0;       	//计算相似度 s 
+    for(int k=0;k<10;k++){
+    	s+=(hash->hash_X1[k]-hash->hash_X2[k])*(hash->hash_X1[k]-hash->hash_X2[k]);
+	}
+	s=sqrt(s);
+    cout<<endl<<endl<<"相似度："<<fixed<<s<<endl;
+
+	return 0;
+}
+
+

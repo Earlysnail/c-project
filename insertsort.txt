@@ -1,0 +1,35 @@
+#include<iostream>
+using namespace std;
+void swap(int &a,int &b)
+{
+	int c=a;a=b;b=c;
+}
+void f(int p[],int n)
+{
+	for(int i=1;i<n;i++)
+	{
+		int j=i;
+		while(p[j]<p[j-1]&&j>0)
+		{
+			swap(p[j],p[j-1]);
+			j--;
+		}
+	}
+} 
+int main()
+{
+ 	int n;
+	cin>>n;
+	int *p=new int[n];
+	for(int i=0;i<n;i++)
+	{
+		cin>>p[i];
+		
+	}
+	f(p,n);
+	for(int i=0;i<n;i++)
+	{
+		cout<<p[i]<<" ";
+	}
+	return 0;
+}

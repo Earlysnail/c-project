@@ -1,0 +1,401 @@
+#include<iostream>
+#include<fstream>
+#include<cmath>
+#include <string>
+#include <ctype.h>
+using namespace std;
+#define max 57                      //哈希表长 
+string str[max] = { "asm","auto","bool","break","cache","case","char","class",
+                	"const","continue","default","delete","do","double",
+					"else","enum","explicit","explort","extern","false","float","for",
+					"goto","if","inline","int","long","mutable","namespace","new","operator","private","protected","public","register","return","short",
+					"signed","sizeof","static","struct","switch","template","this","throw","true","try",
+					"typedef","typeid","typename","union","unsigned","using","virtual","void","volatile",
+                    "while"};	 //C++语言中的57个关键字存入二维数组中,排好序的数组
+
+class Hash{							//哈希表类 
+	public:
+		string hash_str[max]={"0","0","0","0","0","0","0","0","0","0",
+		"0","0","0","0","0","0","0","0","0","0",
+		"0","0","0","0","0","0","0","0","0","0",
+		"0","0","0","0","0","0","0","0","0","0",
+		"0","0","0","0","0","0","0","0","0","0",
+		"0","0","0","0","0","0","0"};  //哈希表关键字 
+		int hash_X[max];   //程序关键字频度 
+		int con[max];		//冲突次数 
+		Hash(){		//构造函数，赋值哈希表关键字 
+		}
+		~Hash(){}			//析构函数 
+
+}; 
+
+int GetKey(string keyword)  //哈希函数
+{  //Hash函数为：Hash(Key)=[(Key的首字母序号)*100+(Key的尾字母序号)] Mod 59
+	return ( keyword[0]*100+keyword[keyword.length()-1] ) % 59; 
+}	
+
+int sampleword(string s1,string word){
+	int len1=s1.length();
+	int len2=word.length();
+	for(int i=0;i<=(len1-len2);i++){
+		for(int j=i,k=0;k<len2;k++){
+			
+			if(s1[j]!=word[k]){
+				break;
+			}
+			else {
+				if(k==(len2-1)&&!isalpha(s1[i-1])&&!isalpha(s1[k+1]))return 1;
+				else j++;
+			}
+		}
+		
+	}
+	return 0;
+}
+
+
+
+int isKeyWords(string word,string str[]){
+	for(int i=0;i<max;i++){
+		if(word==str[i])return 1;
+	}
+		return 0;
+}
+/*
+int GetFreePos(int key,Hash *hash)  //在哈希表中给关键字找个位置插进去
+{
+	int find,tem=0;
+	if(key<0||key>=max)      
+		return -1;
+	for(find=key;find<max;find++)  //先找后面的位置
+	{
+		cout<<"find1:"<<hash->hash_str[find]<<" ";
+		if(hash->hash_str[find]=="0")  //若这个地方为空
+		{
+			cout<<"find1:"<<find<<" ";
+			hash->con[find]=tem;           //把冲突的次数存入con中
+		    return find; 
+		}
+		tem++;
+	}
+	for(find=0;find<key;find++)          //若后面没有地方可以插入，再找前面的位置
+	{
+		tem++;
+		if(hash->hash_str[find]=="0")
+		{
+			hash->con[find]=tem;
+			return find;
+		}
+	}
+	return -1; //哈希表已满
+}*/
+
+/*
+
+int FindHash(string keyword,Hash *hash)   //查找哈希表，分块查找
+{
+	int key,find,tem=0;
+//	if(!isKeyWords(keyword))    //用于查找制定关键字时判断是否为关键字
+//	return -1;
+	key=GetKey(keyword);
+	
+	if(hash->hash_str[key]==keyword)
+		return key;
+	for(find=key+1;find<max;find++)
+	{                            //线性探查法顺序查找哈希表中是否已存在关键字
+		tem++;                   //统计冲突次数
+		if(hash->hash_str[find]==keyword)
+		{
+			hash->con[find]=tem;        //若有相等的就把冲突的次数存入数组的con中
+			return find;
+		}
+	}
+	for(find=0;find<key;find++)   //后面的找不到再从前面开始找
+	{
+		tem++;
+		if(hash->hash_str[find]==keyword)
+		{
+			hash->con[find]=tem;
+			return find;
+		}
+	}
+	return -1;
+}
+*/
+
+int readfile(char* filename,Hash* hash){
+	ifstream fin(filename); 		//读取程序1  
+	string word;
+	
+	while(fin>>word){					//逐个读取字符串 
+		cout<<word<<" "<<endl;
+		for(int i=0;i<max;i++){
+			if(sampleword(word,str[i])){
+			//	hash->hash_X[i]++;      //用哈希表记录关键字出现频度 
+				cout<<"------------------"<<endl;
+				word = str[i];
+				cout<<word<<" "<<endl<<"------------------"<<endl;
+				int key=GetKey(word);
+			//	cout<<key<<" ";
+				if(hash->hash_str[key]==word){
+					hash->hash_X[key]++;
+				}
+				else{
+					for(int find=key+1;find<max;find++){
+						if(hash->hash_str[find]==word){
+							hash->hash_X[find]++;
+							break;
+						}
+						else if(hash->hash_str[find]=="0"){
+							hash->hash_str[find]=word;
+							hash->hash_X[find]++;
+							break;
+						}
+						
+							
+					}
+					
+					
+					 
+				}
+				
+			/*	int find=GetFreePos(key,hash);
+				cout<<"find="<<find<<endl;
+				if(find>-1&&find<max){
+					if(hash->hash_str[find]=="0"){
+							hash->hash_str[find]=word;
+					}
+					
+					hash->hash_X[find]++;
+				}
+				else{
+					cout<<"表满"<<endl; 
+				}*/
+			}
+		}		
+	}
+	fin.close();
+	return 1;
+
+}
+		
+void show(Hash* hash){
+	cout<<endl<<"关键字："<<'\t'; 
+	for(int j=0;j<max;j++){	
+		if(hash->hash_str[j]!="0")					//输出关键字 
+			cout<<hash->hash_str[j]<<'\t';
+	}
+	cout<<endl<<endl<<"关键字频度:"<<'\t';
+	for(int j=0;j<max;j++){	
+		if(hash->hash_X[j]!=0)					//输出程序1关键字频度 
+			cout<<hash->hash_X[j]<<'\t';
+	}
+/*	cout<<endl<<endl<<"程序2关键字频度:"<<'\t';
+	for(int j=0;j<max;j++){							//输出程序2关键字频度 
+		cout<<hash_2->hash_X[j]<<'\t';
+	}*/
+}	
+		
+double counts(Hash* hash_1,Hash* hash_2){
+	double s=0;       	//计算相似度 s 
+    for(int k=0;k<max;k++){
+    	s+=(hash_1->hash_X[k]-hash_2->hash_X[k])*(hash_1->hash_X[k]-hash_2->hash_X[k]);
+	}
+	return s=sqrt(s);
+}	
+
+
+				
+
+int main()
+{
+	Hash* hash_1 = new Hash();
+	Hash* hash_2 = new Hash();
+	char orz; 
+    int flag=1,i,count,key,has;
+//	char filename1[128],filename2[128],word[MAXLEN];
+    while(flag)
+	{
+		printf("\t\tA.读取两个文件\n");
+	    printf("\t\tB.显示两个程序的s值\n");
+	    printf("\t\tC.退出\n\n");
+	    printf("\t\tD.显示hash表\n\n");
+		printf("\t\t请输入序号(A--D):");
+        scanf("%c",&orz);
+		switch(orz) //选择  
+		{
+		    case 'a':
+			case 'A':
+				system("cls");                         //清屏函数
+                printf("请输入要读取的第一个文件名(文件必须与程序在同一目录下):");    //比如输入：a.cpp
+			
+			//	scanf("%s",&filename1);
+				readfile("file_1.txt",hash_1);
+			//	Read(filename1,HS1);
+				cout<<endl<<"请输入要读取的第二个文件名(文件必须与程序在同一目录下):";
+			//	printf("\n");
+			//	printf("请输入要读取的第二个文件名(文件必须与程序在同一目录下):");    //比如输入：a.cpp
+			//	scanf("%s",&filename2);
+		
+			//	Read(filename2,HS2);
+				readfile("file_2.txt",hash_2);
+			//    printf("\n按任意键返回...");
+				cout<<endl<<"按任意键返回...";
+			 //   getch();
+			    system("cls");
+				break;
+		    case 'b':
+			case 'B':
+				system("cls");
+				cout<<"相似度s:"<<counts(hash_1,hash_2)<<endl; 
+			 //   printf("\n按任意键返回...");
+			    cout<<endl<<"按任意键返回...";
+			    getchar();
+			    getchar();
+			    system("cls");
+			    break;
+		    case 'c':
+			case 'C':
+				flag=0;
+				break;
+			case 'd':
+			case 'D':
+			
+				system("cls");
+			//	printf("每次显示5行，请按回车键继续！\n");
+				cout<<"每次显示5行，请按回车键继续！"<<endl;
+			/*	for(i=0;i<HASHLEN;i++)
+				{
+			  	    Show(i,HS1); 
+				    if((i+1)%5==0)
+						getchar();  //为了清晰，每次显示5行
+				}*/
+				show(hash_1);
+				show(hash_2);
+			  //  printf("关键字总数为: %d\n",cont);
+			    
+			 //   printf("\n按任意键返回...");
+			    cout<<endl<<"按任意键返回...";
+			    getchar();
+			    getchar();
+			    system("cls");
+			default:
+			    system("cls");
+		}
+	}
+
+/*	for(int i=0;i<max;i++){
+		cout<<i<<" "<<str[i]<<" "<<GetKey(str[i])<<endl;
+	} */
+
+//	Hash* hash_1 = new Hash();     	//实例化哈希表 ，传入关键字数组 
+//	Hash* hash_2 = new Hash();     	//实例化哈希表 ，传入关键字数组 
+	
+	
+/*	for(int i=0;i<max;i++){
+		cout<<i<<" "<<hash_1->hash_str[i]<<" "<<hash_1->hash_X[i]<<" "<<endl;
+	} */
+//	readfile("file_1.txt",hash_1);
+
+
+/*	string s1="bcdef";
+	string s2="bcdef";
+	cout<<sampleword(s1,s2);*/
+	
+/*	
+	ifstream fin_X1("file_1.txt"); 		//读取程序1 
+	ifstream fin_X2("file_2.txt"); 	   //读取程序2 
+	string word;
+	
+	
+	while(fin_X1>>word){					//逐个读取字符串 
+		for(int i=0;i<max;i++){
+			if(isKeyWords(word,hash->hash_str[i])){
+			hash->hash_X1[i]++;  //用哈希表记录关键字出现频度 
+			word = hash->hash_str[i];
+			cout<<word<<endl;
+			}
+		}		
+	}
+	
+	while(fin_X2>>word){
+		for(int i=0;i<max;i++){
+			if(isKeyWords(word,hash->hash_str[i])) hash->hash_X2[i]++;
+		
+		}		
+	}
+*/	
+
+//	show(hash_1);
+/*
+	cout<<"关键字："<<'\t'<<'\t'; 
+	for(int j=0;j<max;j++){						//输出关键字 
+		cout<<hash_1->hash_str[j]<<'\t';
+	}
+	cout<<endl<<endl<<"程序1关键字频度:"<<'\t';
+	for(int j=0;j<max;j++){						//输出程序1关键字频度 
+		cout<<hash_1->hash_X[j]<<'\t';
+	}
+	cout<<endl<<endl<<"程序2关键字频度:"<<'\t';
+	for(int j=0;j<max;j++){							//输出程序2关键字频度 
+		cout<<hash_2->hash_X[j]<<'\t';
+	}
+	
+	*/
+
+ //   fin_X1.close();    //关闭文件读取 
+ //   fin_X2.close();
+   /* 
+    double s=0;       	//计算相似度 s 
+    for(int k=0;k<10;k++){
+    	s+=(hash_1->hash_X[k]-hash_2->hash_X[k])*(hash_1->hash_X[k]-hash_2->hash_X[k]);
+	}
+	s=sqrt(s);*/
+	
+//    cout<<endl<<endl<<"相似度："<<fixed<<counts(hash_1,hash_2)<<endl;
+
+	return 0;
+}
+
+
+
+/*
+
+int CreatHX(string keyword,Hash* hash)     //建立哈希表,加个*是因为word是一个数组
+{
+	int key;
+	for(int i=0;i<max;i++){
+		if(isKeyWords(keyword,hash->hash_str[i])) return -1;  //不是关键字跳出此函数
+	}
+           
+	key=GetKey(keyword);       //计算哈希值，根据所给哈希函数计算得出的结果
+	if(strlen(HS[key].keyword)>0) //判断关键字表中该位置是否存在关键字，strlen用于计算()内的字符串长度
+	{      //已经存在有关键字
+		if(strcmp(HS[key].keyword,keyword)==0)
+		{  //再判断哈希表中该位置的关键字是否相同
+			HS[key].count++;               //相同就频度加1
+			return 1;                      //跳出函数
+		}
+		key=FindHX(keyword,HS);  //不相同，继续查找
+		if(key<0)             //没有找到相等的keyword
+		{
+			key=GetFreePos(GetKey(keyword),HS);
+			if(key<0)                 //哈希表满或者计算的哈希值有问题
+				return -1;
+			strcpy(HS[key].keyword,keyword);  //将关键字插入哈希表
+		
+		}
+		if(key<0)
+			return -1;
+		HS[key].count++;
+	}
+	else  //该位置为空，直接将关键字插入该位置中
+	{
+		strcpy(HS[key].keyword,keyword);
+		HS[key].count++;
+
+	}
+	return 1;
+}
+*/
+

@@ -1,0 +1,58 @@
+# Project: Project1
+# Makefile created by Dev-C++ 5.10
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+OBJ      = main.o Commodity.o dress.o appliance.o employee.o saleman.o manager.o warehouseman.o food.o employee_manage.o Commodity_manage.o
+LINKOBJ  = main.o Commodity.o dress.o appliance.o employee.o saleman.o manager.o warehouseman.o food.o employee_manage.o Commodity_manage.o
+LIBS     = -L"E:/dev_c++/Dev-Cpp/MinGW64/lib" -L"E:/dev_c++/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc
+INCS     = -I"E:/dev_c++/Dev-Cpp/MinGW64/include" -I"E:/dev_c++/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"E:/dev_c++/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.8.1/include"
+CXXINCS  = -I"E:/dev_c++/Dev-Cpp/MinGW64/include" -I"E:/dev_c++/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"E:/dev_c++/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.8.1/include" -I"E:/dev_c++/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.8.1/include/c++"
+BIN      = Project1.exe
+CXXFLAGS = $(CXXINCS) 
+CFLAGS   = $(INCS) 
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+main.o: main.cpp
+	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)
+
+Commodity.o: Commodity.cpp
+	$(CPP) -c Commodity.cpp -o Commodity.o $(CXXFLAGS)
+
+dress.o: dress.cpp
+	$(CPP) -c dress.cpp -o dress.o $(CXXFLAGS)
+
+appliance.o: appliance.cpp
+	$(CPP) -c appliance.cpp -o appliance.o $(CXXFLAGS)
+
+employee.o: employee.cpp
+	$(CPP) -c employee.cpp -o employee.o $(CXXFLAGS)
+
+saleman.o: saleman.cpp
+	$(CPP) -c saleman.cpp -o saleman.o $(CXXFLAGS)
+
+manager.o: manager.cpp
+	$(CPP) -c manager.cpp -o manager.o $(CXXFLAGS)
+
+warehouseman.o: warehouseman.cpp
+	$(CPP) -c warehouseman.cpp -o warehouseman.o $(CXXFLAGS)
+
+food.o: food.cpp
+	$(CPP) -c food.cpp -o food.o $(CXXFLAGS)
+
+employee_manage.o: employee_manage.cpp
+	$(CPP) -c employee_manage.cpp -o employee_manage.o $(CXXFLAGS)
+
+Commodity_manage.o: Commodity_manage.cpp
+	$(CPP) -c Commodity_manage.cpp -o Commodity_manage.o $(CXXFLAGS)

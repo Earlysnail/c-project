@@ -1,0 +1,59 @@
+
+
+#include<iostream>
+#include<fstream>
+#include<vector>
+#include<cmath>
+using namespace std;
+int main()
+{
+	
+	string vec[10] = {"void","int","for","char","if","else","while","do","break","class"};
+	vector<string> vector_s(vec,vec+10);
+	vector<string>::iterator iterator_s;
+	iterator_s = vector_s.begin();
+	vector<string> vector_1;
+	
+	int X1[10]={0};
+	int X2[10]={0};
+	
+	ifstream fin_X1("file_in_1.txt"); 
+	ifstream fin_X2("file_in_2.txt"); 
+	string str;
+	
+	while(fin_X1>>str){
+		vector_1.push_back(str);
+		for(int i=0;i<10;i++){
+			if(str==vec[i]) X1[i]++;
+		}		
+	}
+	while(fin_X2>>str){
+		vector_1.push_back(str);
+		for(int i=0;i<10;i++){
+			if(str==vec[i]) X2[i]++;
+		}		
+	}
+	
+	for(int j=0;j<10;j++){
+		cout<<vec[j]<<'\t';
+	}
+	cout<<endl<<"-----------------------------------------"<<endl<<"X1:";
+	for(int j=0;j<10;j++){
+		cout<<X1[j]<<'\t';
+	}
+	cout<<endl<<"----------------------------------------"<<endl<<"X2:";
+	for(int j=0;j<10;j++){
+		cout<<X2[j]<<'\t';
+	}
+
+    fin_X1.close();
+    fin_X2.close();
+    
+    double s=0;
+    for(int k=0;k<10;k++){
+    	s+=(X1[k]-X2[k])*(X1[k]-X2[k]);
+	}
+	s=sqrt(s);
+    cout<<endl<<"--------------------------------"<<endl<<"ÏàËÆ¶È£º"<<fixed<<s<<endl;
+	return 0;
+}
